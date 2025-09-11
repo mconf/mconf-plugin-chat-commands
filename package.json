@@ -1,6 +1,6 @@
 {
-  "name": "<plugin-name>",
-  "version": "0.0.1",
+  "name": "chat-commands-plugin",
+  "version": "1.0.0",
   "private": true,
   "main": "./src/index.tsx",
   "dependencies": {
