@@ -1,6 +1,6 @@
 {
-  "requiredSdkVersion": "~0.0.73",
-  "name": "<plugin-name>",
-  "javascriptEntrypointUrl": "<plugin-name>.js",
-  "localesBaseUrl": "https://cdn.dominio.com/pluginabc/"
+  "requiredSdkVersion": "0.1.x",
+  "name": "ChatCommandsPlugin",
+  "javascriptEntrypointUrl": "ChatCommandsPlugin.js",
+  "localesBaseUrl": "ChatCommandsPlugin.js"
 }
