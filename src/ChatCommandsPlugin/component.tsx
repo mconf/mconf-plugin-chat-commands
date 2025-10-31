@@ -83,6 +83,7 @@ export function ChatCommandPlugin({
   useEffect(() => {
     if (messages && usersList && currentUser) {
       messages.forEach(async (message) => {
+        if (!message.message) return;
         if (message.message.startsWith(COMMAND_PREFIX)
           && message.senderUserId === currentUser.userId
           && !executedMessageIds.current.has(message.messageId)) {
