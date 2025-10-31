@@ -1,5 +1,6 @@
-import { CurrentUserData, PluginApi, UsersBasicInfoData } from 'bigbluebutton-html-plugin-sdk';
+import { PluginApi } from 'bigbluebutton-html-plugin-sdk';
 import { TriggerMutationFunction } from 'bigbluebutton-html-plugin-sdk/dist/cjs/data-creation/types';
+import { CommandExecuteParams } from './commands/types';
 
 declare global {
   interface Window {
@@ -31,13 +32,7 @@ export type CommandConfig = {
   [command: string]: {
     name: string;
     description: string;
-    execute: (params: {
-      mutation: TriggerMutationFunction<unknown>;
-      currentUser: CurrentUserData;
-      users: UsersBasicInfoData[];
-      senderId: string;
-      args?: string[];
-    }) => void;
+    execute: (params: CommandExecuteParams) => void;
   };
 };
 
