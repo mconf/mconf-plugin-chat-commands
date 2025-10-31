@@ -1,43 +1,15 @@
 import React, { useEffect, useMemo, useRef } from 'react';
 import { pluginLogger } from 'bigbluebutton-html-plugin-sdk';
 import {
-  CommandConfig,
   ChatCommandPluginProps,
   SetRoleMutation,
   MutationMap,
 } from './types';
+import {
+  DEFAULT_COMMANDS,
+  COMMAND_PREFIX,
+} from './service';
 import { SET_ROLE } from './mutations';
-
-const COMMAND_PREFIX = '/';
-
-const VIEWER_ROLE = () => window.meetingClientSettings.public.user.role_viewer;
-const MODERATOR_ROLE = () => window.meetingClientSettings.public.user.role_moderator;
-
-const DEFAULT_COMMANDS: CommandConfig = {
-  demote: {
-    name: 'demote',
-    description: 'Demote all users to viewers except the sender',
-    execute: ({
-      currentUser,
-      users,
-      senderId,
-      mutation,
-    }) => {
-      if (!currentUser || currentUser.role !== MODERATOR_ROLE()) {
-        pluginLogger.warn('Current user is not a moderator. Cannot execute demote command.');
-        return;
-      }
-      users
-        .filter((user) => user.userId !== senderId && user.isModerator)
-        .map((user) => mutation({
-          variables: {
-            userId: user.userId,
-            role: VIEWER_ROLE(),
-          },
-        }));
-    },
-  },
-};
 
 export function ChatCommandPlugin({
   pluginApi,
@@ -51,6 +23,8 @@ export function ChatCommandPlugin({
 
   const mutationMap: MutationMap = useMemo(() => ({
     [DEFAULT_COMMANDS.demote.name]: setRole,
+    [DEFAULT_COMMANDS.demoteAll.name]: setRole,
+    [DEFAULT_COMMANDS.promoteAll.name]: setRole,
   }), [setRole]);
 
   const currentUser = useMemo(() => {
@@ -94,6 +68,7 @@ export function ChatCommandPlugin({
               currentUser,
               users: usersList,
               senderId: message.senderUserId,
+              pluginApi,
               args,
             });
             executedMessageIds.current.add(message.messageId);
