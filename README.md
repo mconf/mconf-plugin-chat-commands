@@ -1,5 +1,44 @@
 # Repository of a plugin for BigBlueButton
 
+## Implemented Commands
+
+### `/list`
+- **Description:** Lists all available commands in the chat.
+- **Usage:** Type `/list` in the chat.
+- **Restrictions:** None.
+
+### `/demote`
+- **Description:** Demotes the user who issued the command to the viewer role.
+- **Usage:** Type `/demote` in the chat as a moderator.
+- **Restrictions:** Only users with moderator privileges can execute this command.
+
+### `/demoteAll`
+- **Description:** Demotes all users in the meeting to the viewer role, except for the user who issued the command.
+- **Usage:** Type `/demoteAll` in the chat as a moderator. The command will change the role of all other users to viewers.
+- **Restrictions:** Only users with moderator privileges can execute this command. The command will not affect the sender.
+
+### `/promoteAll`
+- **Description:** Promotes all users in the meeting to the moderator role, except for the user who issued the command.
+- **Usage:** Type `/promoteAll` in the chat as a moderator. The command will change the role of all other users to moderators.
+- **Restrictions:** Only users with moderator privileges can execute this command. The command will not affect the sender.
+
+### `/spam`
+- **Description:** Sends a message repeatedly, either a specified number of times or at regular intervals.
+- **Usage:**
+  - For multiple sends: `/spam "message with spaces" [times]` (default 1, max 100)
+  - For interval spam: `/spam "message" interval <ms>`
+- **Restrictions:** None. Use `/stopSpam` to stop interval spam.
+
+### `/stopSpam`
+- **Description:** Stops all active spam intervals started by the `/spam` command.
+- **Usage:** Type `/stopSpam` in the chat.
+- **Restrictions:** None.
+
+### `/debug`
+- **Description:** Displays detailed debug information about the current session, including user details, browser environment, timing information, and storage data.
+- **Usage:** Type `/debug` in the chat.
+- **Restrictions:** None.
+
 ## Description
 
 This is an experimental internal plugin developed by mconf for BigBlueButton. Its main purpose is to allow the inclusion and execution of custom chat commands in meetings. The plugin is designed to be easily extensible, enabling developers to add new commands with minimal effort.
@@ -7,7 +46,7 @@ This is an experimental internal plugin developed by mconf for BigBlueButton. It
 ### Features
 - Easily add new chat commands by extending the configuration.
 - Commands can trigger custom mutations and actions in the meeting context.
-- Example command: `/demote` (see below for details).
+- Example command: `/demote` (see above for details).
 
 A screenshot and/or a short video can be added here to illustrate usage.
 
@@ -59,13 +98,6 @@ const DEFAULT_COMMANDS: CommandConfig = {
   },
 };
 ```
-
-## Implemented Commands
-
-### `/demote`
-- **Description:** Demotes all users in the meeting to the viewer role, except for the user who issued the command.
-- **Usage:** Type `/demote` in the chat as a moderator. The command will change the role of all other moderators to viewers.
-- **Restrictions:** Only users with moderator privileges can execute this command. The command will not affect the sender or users who are already viewers.
 
 ## Development mode
 
