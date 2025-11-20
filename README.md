@@ -40,18 +40,14 @@
 - **Restrictions:** None.
 
 ### `/join`
-- **Description:** Makes HTTP requests to the provided BigBlueButton join URL to obtain valid session tokens, then establishes real GraphQL WebSocket connections to simulate multiple users joining a BigBlueButton meeting for load testing purposes. The command extracts the GraphQL WebSocket URL from the provided join URL and fetches session tokens by following redirects.
+- **Description:** Makes HTTP requests to the provided BigBlueButton join URL to obtain valid session tokens, then establishes real GraphQL WebSocket connections to simulate multiple users joining a BigBlueButton meeting for load testing purposes.
 - **Usage:**
   - With quotes (recommended for URLs with special characters): `/join "<join-url>" <number_of_users> [-v]`
   - Without quotes (for simple URLs): `/join <join-url> <number_of_users> [-v]`
   - Verbose mode: Add `-v` flag to receive detailed progress messages in the chat
-- **Options:**
-  - `-v`: Enable verbose mode to show detailed progress messages in the chat during the join process
-- **Examples:**
-  - `/join "https://bbb.example.com/bigbluebutton/api/join?fullName=User&meetingID=test&password=mp&..." 10`
-  - `/join https://bbb.example.com/simple-url 5 -v`
-  - `/join "https://bbb.example.com/complex?url=with&special=chars" 3 -v`
-- **Restrictions:** Number of users must be between 1 and 20. Requires valid BigBlueButton join URL that returns session tokens upon request.### `/stopJoin`
+- **Restrictions:** Number of users must be greater than 1. Requires valid BigBlueButton join URL that returns session tokens upon request.
+
+### `/stopJoin`
 - **Description:** Terminates all active WebSocket connections created by the `/join` command.
 - **Usage:** Type `/stopJoin` in the chat.
 - **Restrictions:** None.
