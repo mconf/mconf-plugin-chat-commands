@@ -2,14 +2,21 @@
   "name": "chat-commands-plugin",
   "version": "1.0.0",
   "private": true,
+  "type": "module",
   "main": "./src/index.tsx",
   "dependencies": {
+    "@apollo/client": "^3.14.0",
     "babel-plugin-syntax-dynamic-import": "^6.18.0",
     "bigbluebutton-html-plugin-sdk": "0.1.x",
+    "graphql": "^16.8.0",
+    "graphql-tag": "^2.12.6",
+    "graphql-ws": "^5.16.2",
     "path": "^0.12.7",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "styled-components": "^5.3.3"
+    "styled-components": "^5.3.3",
+    "subscriptions-transport-ws": "^0.11.0",
+    "uuid": "^13.0.0"
   },
   "scripts": {
     "build-bundle": "webpack --mode production",

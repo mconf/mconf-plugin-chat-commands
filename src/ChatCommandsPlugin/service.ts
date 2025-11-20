@@ -6,6 +6,8 @@ import { promoteAllCommandExecutor } from './commands/promoteAll';
 import { spamCommandExecutor } from './commands/spam';
 import { stopSpamCommandExecutor } from './commands/stopSpam';
 import { debugCommandExecutor } from './commands/debug';
+import { joinCommandExecutor } from './commands/join';
+import { stopJoinCommandExecutor } from './commands/stopJoin';
 import { CommandConfig } from './types';
 
 export const COMMAND_PREFIX = '/';
@@ -70,5 +72,15 @@ export const DEFAULT_COMMANDS: CommandConfig = {
     name: 'debug',
     description: 'Show detailed debug information about the session and environment',
     execute: (params) => (debugCommandExecutor(params)),
+  },
+  join: {
+    name: 'join',
+    description: 'Simulate multiple users joining by making join requests and establishing WebSocket connections (Usage: /join <join-url> <number_of_users>)',
+    execute: (params) => (joinCommandExecutor(params)),
+  },
+  stopJoin: {
+    name: 'stopJoin',
+    description: 'Stop all active WebSocket connections created by the /join command',
+    execute: (params) => (stopJoinCommandExecutor(params)),
   },
 };
