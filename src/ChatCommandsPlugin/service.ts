@@ -8,6 +8,8 @@ import { stopSpamCommandExecutor } from './commands/stopSpam';
 import { debugCommandExecutor } from './commands/debug';
 import { joinCommandExecutor } from './commands/join';
 import { stopJoinCommandExecutor } from './commands/stopJoin';
+import { customJoinCommandExecutor } from './commands/customJoin';
+import { stopCustomJoinCommandExecutor } from './commands/stopCustomJoin';
 import { CommandConfig } from './types';
 
 export const COMMAND_PREFIX = '/';
@@ -82,5 +84,15 @@ export const DEFAULT_COMMANDS: CommandConfig = {
     name: 'stopJoin',
     description: 'Stop all active WebSocket connections created by the /join command',
     execute: (params) => (stopJoinCommandExecutor(params)),
+  },
+  customJoin: {
+    name: 'customJoin',
+    description: '⚠️ Generate custom join URLs with server secret (SECURITY WARNING: Exposes secret!) - Usage: /customJoin --secret "SECRET" --pw "PASSWORD" <count>',
+    execute: (params) => (customJoinCommandExecutor(params)),
+  },
+  stopCustomJoin: {
+    name: 'stopCustomJoin',
+    description: 'Stop all active WebSocket connections created by the /customJoin command',
+    execute: (params) => (stopCustomJoinCommandExecutor(params)),
   },
 };

@@ -18,6 +18,7 @@ export function ChatCommandPlugin({
   const loadedChatMessagesResponse = pluginApi.useLoadedChatMessages();
   const usersBasicInfoResponse = pluginApi.useUsersBasicInfo();
   const currentUserResponse = pluginApi.useCurrentUser();
+  const meetingInfoResponse = pluginApi.useMeeting();
   const [setRole] = pluginApi.useCustomMutation<SetRoleMutation>(SET_ROLE);
   const executedMessageIds = useRef<Set<string>>(new Set());
 
@@ -45,6 +46,15 @@ export function ChatCommandPlugin({
     return usersBasicInfoResponse.data.user;
   }, [usersBasicInfoResponse]);
 
+  const meeting = useMemo(() => {
+    if (meetingInfoResponse.loading) return null;
+    if (meetingInfoResponse.error || !meetingInfoResponse.data) {
+      pluginLogger.error('Error loading meeting info', meetingInfoResponse.error);
+      return null;
+    }
+    return meetingInfoResponse.data;
+  }, [meetingInfoResponse]);
+
   const messages = useMemo(() => {
     if (loadedChatMessagesResponse.loading) return [];
     if (loadedChatMessagesResponse.error || !loadedChatMessagesResponse.data) {
@@ -68,6 +78,7 @@ export function ChatCommandPlugin({
               mutation: mutationMap[cmd],
               currentUser,
               users: usersList,
+              meeting,
               senderId: message.senderUserId,
               pluginApi,
               args,
@@ -77,7 +88,7 @@ export function ChatCommandPlugin({
         }
       });
     }
-  }, [messages, usersList, currentUser, commands]);
+  }, [messages, usersList, currentUser, commands, meeting]);
 
   return null;
 }
