@@ -1,5 +1,5 @@
 import { CommandExecutor } from './types';
-import { clearAllSpamIntervals } from '../spamController';
+import { clearAllSpamIntervals } from './commons/spamController';
 
 export const stopSpamCommandExecutor: CommandExecutor = ({ pluginApi }) => {
   const clearedCount = clearAllSpamIntervals();

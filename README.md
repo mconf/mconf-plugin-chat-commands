@@ -52,6 +52,48 @@
 - **Usage:** Type `/stopJoin` in the chat.
 - **Restrictions:** None.
 
+### `/customJoin`
+- **Description:** ⚠️ **ADVANCED FEATURE WITH SECURITY IMPLICATIONS** - Generates custom BigBlueButton join URLs using the server secret to create authenticated sessions with custom user data. This allows full control over user properties (name, role, custom metadata) when simulating joins. Unlike `/join`, which requires a pre-generated join URL, this command generates URLs directly using the BBB API secret.
+- **Usage:** `/customJoin --secret "YOUR_SECRET" --pw "PASSWORD" <count> [options]`
+- **Required Parameters:**
+  - `--secret "SECRET"`: BigBlueButton server shared secret (found in `/etc/bigbluebutton/bbb-conf.properties`)
+  - `--pw "PASSWORD"`: Meeting password (use attendee password for viewers, moderator password for moderators)
+  - `<count>`: Number of users to join (positive integer)
+- **Optional Parameters (auto-detected from current session if not provided):**
+  - `--host "URL"`: BigBlueButton server URL (default: current host from window.location.origin)
+  - `--meetingID "ID"`: Meeting/room identifier (default: auto-detected from DOM or meeting prop)
+  - `--userdata "key1=value1,key2=value2"`: Custom userdata as comma-separated key=value pairs (e.g., `--userdata "bot=true,role=tester"`)
+  - `-v`: Verbose mode (shows detailed progress messages in chat)
+- **Examples:**
+  - Join 5 viewers in current meeting (auto-detect host and meetingID):
+    ```
+    /customJoin --secret "abc123secret" --pw "attendeepass" 5 -v
+    ```
+  - Join to a different meeting:
+    ```
+    /customJoin --secret "abc123secret" --host "https://bbb.example.com" --meetingID "room123" --pw "attendeepass" 3
+    ```
+  - Join 2 moderators with custom userdata:
+    ```
+    /customJoin --secret "abc123secret" --pw "moderatorpass" 2 --userdata "bot=true,role=tester"
+    ```
+- **Security Warning:** ⚠️ This command exposes your BigBlueButton server secret in chat history and browser memory. The secret is extremely sensitive and should NEVER be shared. Only use this command in:
+  - Secure development/testing environments
+  - Private meetings where all participants are trusted
+  - Environments where chat logs are not persisted or are securely managed
+- **Features:**
+  - Generates random user names using the **@faker-js/faker** library (realistic names in multiple locales)
+  - Creates properly signed join URLs with SHA-1 checksums
+  - Establishes real GraphQL WebSocket connections
+  - Supports custom userdata fields as individual query parameters
+  - Role (attendee/moderator) is determined by the password provided
+- **Restrictions:** Count must be a positive integer. Requires valid BBB server credentials.
+
+### `/stopCustomJoin`
+- **Description:** Terminates all active WebSocket connections created by the `/customJoin` command.
+- **Usage:** Type `/stopCustomJoin` in the chat.
+- **Restrictions:** None.
+
 ## Description
 
 This is an experimental internal plugin developed by mconf for BigBlueButton. Its main purpose is to allow the inclusion and execution of custom chat commands in meetings. The plugin is designed to be easily extensible, enabling developers to add new commands with minimal effort.
