@@ -1,13 +1,15 @@
 {
     "compilerOptions": {
         "outDir": "./dist-tsc/",
+        "rootDir": "./src",
         "noImplicitAny": true,
         "module": "esnext",
-        "target": "es5",
+        "target": "es2017",
+        "lib": ["es2017", "dom"],
         "jsx": "react",
         "allowJs": true,
         "moduleResolution": "bundler",
-        "allowSyntheticDefaultImports": true,
+        "allowSyntheticDefaultImports": true
     },
     "include": ["src/*"],
     "paths": {

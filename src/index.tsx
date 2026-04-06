@@ -12,7 +12,7 @@ function PluginInitializer({ pluginUuid }: { pluginUuid: string }): React.ReactN
   return <ChatCommandsPlugin pluginApi={pluginApi} />;
 }
 
-const root = ReactDOM.createRoot(document.getElementById(uuid));
+const root = ReactDOM.createRoot(document.getElementById(uuid) as HTMLElement);
 root.render(
   <React.StrictMode>
     <PluginInitializer pluginUuid={uuid} />

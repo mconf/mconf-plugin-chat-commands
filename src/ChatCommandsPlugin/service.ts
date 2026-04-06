@@ -10,12 +10,12 @@ import { joinCommandExecutor } from './commands/join';
 import { stopJoinCommandExecutor } from './commands/stopJoin';
 import { customJoinCommandExecutor } from './commands/customJoin';
 import { stopCustomJoinCommandExecutor } from './commands/stopCustomJoin';
-import { CommandConfig } from './types';
+import { CommandConfig, CommandEntry } from './types';
 
 export const COMMAND_PREFIX = '/';
 
-export const VIEWER_ROLE = () => window.meetingClientSettings.public.user.role_viewer;
-export const MODERATOR_ROLE = () => window.meetingClientSettings.public.user.role_moderator;
+export const VIEWER_ROLE = () => window?.meetingClientSettings?.public?.user?.role_viewer;
+export const MODERATOR_ROLE = () => window?.meetingClientSettings?.public?.user?.role_moderator;
 
 export const checkModeratorPermission = (
   commandName: string,
@@ -38,7 +38,7 @@ export const DEFAULT_COMMANDS: CommandConfig = {
     description: 'List all available commands',
     execute: ({ pluginApi }) => {
       const commandList = Object.values(DEFAULT_COMMANDS)
-        .map((cmd) => `- \`/${cmd.name}\` - ${cmd.description}`)
+        .map((cmd: CommandEntry) => `- \`/${cmd.name}\` - ${cmd.description}`)
         .join('\n');
       pluginApi.serverCommands?.chat.sendPublicChatMessage({
         textMessageInMarkdownFormat: `**Available Commands:**\n${commandList}`,

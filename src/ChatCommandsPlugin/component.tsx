@@ -14,12 +14,12 @@ import { SET_ROLE } from './mutations';
 export function ChatCommandPlugin({
   pluginApi,
   commands = DEFAULT_COMMANDS,
-}: ChatCommandPluginProps): React.ReactElement {
-  const loadedChatMessagesResponse = pluginApi.useLoadedChatMessages();
-  const usersBasicInfoResponse = pluginApi.useUsersBasicInfo();
-  const currentUserResponse = pluginApi.useCurrentUser();
-  const meetingInfoResponse = pluginApi.useMeeting();
-  const [setRole] = pluginApi.useCustomMutation<SetRoleMutation>(SET_ROLE);
+}: ChatCommandPluginProps): React.ReactElement | null {
+  const loadedChatMessagesResponse = pluginApi.useLoadedChatMessages!();
+  const usersBasicInfoResponse = pluginApi.useUsersBasicInfo!();
+  const currentUserResponse = pluginApi.useCurrentUser!();
+  const meetingInfoResponse = pluginApi.useMeeting!();
+  const [setRole] = pluginApi.useCustomMutation!<SetRoleMutation>(SET_ROLE);
   const executedMessageIds = useRef<Set<string>>(new Set());
 
   const mutationMap: MutationMap = useMemo(() => ({
@@ -29,6 +29,7 @@ export function ChatCommandPlugin({
   }), [setRole]);
 
   const currentUser = useMemo(() => {
+    if (!currentUserResponse) return null;
     if (currentUserResponse.loading) return null;
     if (currentUserResponse.error || !currentUserResponse.data) {
       pluginLogger.error('Error loading current user', currentUserResponse.error);
@@ -38,6 +39,7 @@ export function ChatCommandPlugin({
   }, [currentUserResponse]);
 
   const usersList = useMemo(() => {
+    if (!usersBasicInfoResponse) return [];
     if (usersBasicInfoResponse.loading) return [];
     if (usersBasicInfoResponse.error || !usersBasicInfoResponse.data) {
       pluginLogger.error('Error loading user list', usersBasicInfoResponse.error);
@@ -47,6 +49,7 @@ export function ChatCommandPlugin({
   }, [usersBasicInfoResponse]);
 
   const meeting = useMemo(() => {
+    if (!meetingInfoResponse) return null;
     if (meetingInfoResponse.loading) return null;
     if (meetingInfoResponse.error || !meetingInfoResponse.data) {
       pluginLogger.error('Error loading meeting info', meetingInfoResponse.error);
@@ -56,6 +59,7 @@ export function ChatCommandPlugin({
   }, [meetingInfoResponse]);
 
   const messages = useMemo(() => {
+    if (!loadedChatMessagesResponse) return [];
     if (loadedChatMessagesResponse.loading) return [];
     if (loadedChatMessagesResponse.error || !loadedChatMessagesResponse.data) {
       pluginLogger.error('Error loading chat messages', loadedChatMessagesResponse.error);
@@ -65,7 +69,20 @@ export function ChatCommandPlugin({
   }, [loadedChatMessagesResponse]);
 
   useEffect(() => {
-    if (messages && usersList && currentUser) {
+    if (!meeting) {
+      pluginLogger.error('Meeting info is not available. Chat commands will not work.');
+      return;
+    }
+    if (!usersList) {
+      pluginLogger.error('User list is not available. Chat commands will not work.');
+      return;
+    }
+    if (!currentUser) {
+      pluginLogger.error('Current user info is not available. Chat commands will not work.');
+      return;
+    }
+
+    if (messages) {
       messages.forEach(async (message) => {
         if (!message.message) return;
         if (message.message.startsWith(COMMAND_PREFIX)
