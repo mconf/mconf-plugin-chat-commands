@@ -4,9 +4,12 @@ import { CommandExecuteParams } from './commands/types';
 
 declare global {
   interface Window {
-    meetingClientSettings: {
+    meetingClientSettings?: {
       public: {
-        user: {
+        app: {
+          bbbWebBase: string;
+        };
+        user?: {
           role_viewer: string;
           role_moderator: string;
         };
@@ -24,16 +27,20 @@ export interface SetRoleMutation {
   role: string;
 }
 
+export type PluginMutationVariables = SetRoleMutation;
+
 export interface MutationMap {
-  [key: string]: TriggerMutationFunction<unknown>;
+  [key: string]: TriggerMutationFunction<PluginMutationVariables> | null
+}
+
+export interface CommandEntry {
+  name: string;
+  description: string;
+  execute: (params: CommandExecuteParams) => void;
 }
 
 export type CommandConfig = {
-  [command: string]: {
-    name: string;
-    description: string;
-    execute: (params: CommandExecuteParams) => void;
-  };
+  [command: string]: CommandEntry;
 };
 
 export interface ChatCommandPluginProps extends ChatMentionProps {

@@ -8,12 +8,14 @@ import { stopSpamCommandExecutor } from './commands/stopSpam';
 import { debugCommandExecutor } from './commands/debug';
 import { joinCommandExecutor } from './commands/join';
 import { stopJoinCommandExecutor } from './commands/stopJoin';
-import { CommandConfig } from './types';
+import { customJoinCommandExecutor } from './commands/customJoin';
+import { stopCustomJoinCommandExecutor } from './commands/stopCustomJoin';
+import { CommandConfig, CommandEntry } from './types';
 
 export const COMMAND_PREFIX = '/';
 
-export const VIEWER_ROLE = () => window.meetingClientSettings.public.user.role_viewer;
-export const MODERATOR_ROLE = () => window.meetingClientSettings.public.user.role_moderator;
+export const VIEWER_ROLE = () => window?.meetingClientSettings?.public?.user?.role_viewer;
+export const MODERATOR_ROLE = () => window?.meetingClientSettings?.public?.user?.role_moderator;
 
 export const checkModeratorPermission = (
   commandName: string,
@@ -36,7 +38,7 @@ export const DEFAULT_COMMANDS: CommandConfig = {
     description: 'List all available commands',
     execute: ({ pluginApi }) => {
       const commandList = Object.values(DEFAULT_COMMANDS)
-        .map((cmd) => `- \`/${cmd.name}\` - ${cmd.description}`)
+        .map((cmd: CommandEntry) => `- \`/${cmd.name}\` - ${cmd.description}`)
         .join('\n');
       pluginApi.serverCommands?.chat.sendPublicChatMessage({
         textMessageInMarkdownFormat: `**Available Commands:**\n${commandList}`,
@@ -82,5 +84,15 @@ export const DEFAULT_COMMANDS: CommandConfig = {
     name: 'stopJoin',
     description: 'Stop all active WebSocket connections created by the /join command',
     execute: (params) => (stopJoinCommandExecutor(params)),
+  },
+  customJoin: {
+    name: 'customJoin',
+    description: '⚠️ Generate custom join URLs with server secret (SECURITY WARNING: Exposes secret!) - Usage: /customJoin --secret "SECRET" --pw "PASSWORD" <count>',
+    execute: (params) => (customJoinCommandExecutor(params)),
+  },
+  stopCustomJoin: {
+    name: 'stopCustomJoin',
+    description: 'Stop all active WebSocket connections created by the /customJoin command',
+    execute: (params) => (stopCustomJoinCommandExecutor(params)),
   },
 };

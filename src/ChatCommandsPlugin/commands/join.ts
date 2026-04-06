@@ -1,39 +1,17 @@
 import { PluginApi, pluginLogger } from 'bigbluebutton-html-plugin-sdk';
-import { ApolloClient, InMemoryCache } from '@apollo/client';
-import { GraphQLWsLink } from '@apollo/client/link/subscriptions';
-import { createClient } from 'graphql-ws';
-import gql from 'graphql-tag';
 import { v4 as uuid } from 'uuid';
 import { CommandExecutor } from './types';
-
-// GraphQL mutations and subscriptions
-const userJoinMutation = gql`
-  mutation UserJoin($authToken: String!, $clientType: String!, $clientIsMobile: Boolean!) {
-    userJoinMeeting(
-      authToken: $authToken,
-      clientType: $clientType,
-      clientIsMobile: $clientIsMobile,
-    )
-  }
-`;
-
-const CURRENT_USER_SUBSCRIPTION = gql`
-  subscription userCurrentSubscription {
-    user_current {
-      authToken
-      userId
-      name
-      role
-      joined
-    }
-  }
-`;
+import {
+  userJoinMutation,
+  CURRENT_USER_SUBSCRIPTION,
+  extractGraphQLWebSocketUrl,
+  createWebSocketConnection,
+  setupConnectionMonitoring,
+  MonitoredApolloClient,
+} from './commons';
 
 // Store active connections to manage them
-const activeConnections: unknown[] = [];
-
-// Connection monitoring variables (removed - now per-user)
-const boundary = 15000; // 15 seconds timeout
+const activeConnections: MonitoredApolloClient[] = [];
 
 export const joinCommandExecutor: CommandExecutor = async ({ pluginApi, args }) => {
   // Parse verbose flag
@@ -100,16 +78,8 @@ export const joinCommandExecutor: CommandExecutor = async ({ pluginApi, args }) 
   }
 
   // Validate BigBlueButton join URL format
-  let graphqlWebsocketUrl: string;
-  try {
-    const url = new URL(joinUrl);
-    if (!url.protocol.startsWith('http')) {
-      throw new Error('Invalid protocol');
-    }
-    // Extract domain and construct GraphQL WebSocket URL
-    const domain = url.hostname;
-    graphqlWebsocketUrl = `wss://${domain}/graphql`;
-  } catch (error) {
+  const graphqlWebsocketUrl = extractGraphQLWebSocketUrl(joinUrl);
+  if (!graphqlWebsocketUrl) {
     sendPublicMessage('Invalid BigBlueButton join URL format. Must be a valid HTTP/HTTPS URL.');
     return;
   }
@@ -118,14 +88,7 @@ export const joinCommandExecutor: CommandExecutor = async ({ pluginApi, args }) 
 
   try {
     // Function to create a single WebSocket connection
-    const createWebSocketConnection = async (
-      userIndex: number,
-    ): Promise<ApolloClient<unknown> & {
-      monitorInterval?: NodeJS.Timeout;
-      userLastMessageRef?: number;
-      userLastPingMessageRef?: number;
-      wsClient?: ReturnType<typeof createClient>;
-    }> => {
+    const createUserConnection = async (userIndex: number): Promise<MonitoredApolloClient> => {
       // Fetch session token for this specific user
       sendPublicMessage(`🔄 User ${userIndex + 1}: Fetching session token...`);
 
@@ -164,77 +127,13 @@ export const joinCommandExecutor: CommandExecutor = async ({ pluginApi, args }) 
 
       // Create unique client session UUID for each simulated user
       const userClientUUID = uuid();
-      pluginLogger.info('Creating WebSocket connection for user', {
-        userIndex: userIndex + 1,
-        clientUUID: userClientUUID,
-        graphqlWebsocketUrl,
-      });
 
-      // Initialize user-specific monitoring variables
-      let userLastMessageRef = 0;
-      let userLastPingMessageRef = 0;
+      // Create WebSocket connection using common module
+      const client = createWebSocketConnection(graphqlWebsocketUrl, sessionToken, userClientUUID);
 
-      // Create GraphQL WebSocket client
-      const wsClient = createClient({
-        url: graphqlWebsocketUrl,
-        connectionParams: {
-          headers: {
-            'X-Session-Token': sessionToken,
-            'X-ClientSessionUUID': userClientUUID,
-            'X-ClientType': 'HTML5',
-            'X-ClientIsMobile': 'false',
-          },
-        },
-        lazy: false, // Connect immediately
-        retryAttempts: 3,
-        shouldRetry: () => true,
-        keepAlive: 30000, // 30 seconds instead of very high value
-        on: {
-          connected: () => {
-            sendPublicMessage(`✅ User ${userIndex + 1}/${numberOfUsers} WebSocket connected\n🆔 Client UUID: ${userClientUUID}`);
-            pluginLogger.info('WebSocket connected successfully', {
-              userIndex: userIndex + 1,
-              clientUUID: userClientUUID,
-              sessionToken,
-            });
-          },
-          connecting: () => {
-            pluginLogger.debug('WebSocket connecting', { userIndex: userIndex + 1 });
-          },
-          error: (error: unknown) => {
-            const errorMessage = error instanceof Error ? error.message : JSON.stringify(error);
-            sendPublicMessage(`❌ User ${userIndex + 1}/${numberOfUsers} WebSocket error: ${errorMessage}`);
-            pluginLogger.error('WebSocket connection error', {
-              userIndex: userIndex + 1,
-              error: errorMessage,
-              clientUUID: userClientUUID,
-            });
-          },
-          closed: () => {
-            pluginLogger.info('WebSocket connection closed', {
-              userIndex: userIndex + 1,
-              clientUUID: userClientUUID,
-            });
-          },
-          message: (message: unknown) => {
-            // Handle ping messages to keep connection alive (BigBlueButton requirement)
-            if (message && typeof message === 'object' && 'type' in message && message.type === 'ping') {
-              userLastPingMessageRef = Date.now();
-            }
-            // Update last message timestamp for connection monitoring
-            userLastMessageRef = Date.now();
-          },
-        },
-      });
-
-      // Create GraphQL WebSocket link using the official GraphQLWsLink
-      const graphWsLink = new GraphQLWsLink(wsClient);
-
-      // Create Apollo Client
-      const client = new ApolloClient({
-        link: graphWsLink,
-        cache: new InMemoryCache(),
-        connectToDevTools: false, // Disable dev tools for simulated users
+      // Set up connection monitoring using common module
+      setupConnectionMonitoring(client, userIndex, (idx) => {
+        sendPublicMessage(`⚠️ User ${idx + 1} connection may be stale (no messages received)`);
       });
 
       // Wait for authToken from user_current subscription and execute mutation when received
@@ -303,34 +202,9 @@ export const joinCommandExecutor: CommandExecutor = async ({ pluginApi, args }) 
         },
       });
 
-      // Start connection monitoring for this client
-      const monitorInterval = setInterval(() => {
-        const tsNow = Date.now();
+      activeConnections.push(client);
 
-        // Check if we've received messages recently for this specific user
-        if (userLastMessageRef !== 0 && userLastPingMessageRef !== 0) {
-          if ((tsNow - userLastMessageRef > boundary)) {
-            // Connection appears stale - no messages received recently
-            sendPublicMessage(`⚠️ User ${userIndex + 1} connection may be stale (no messages received)`);
-          }
-        }
-      }, 5000); // Check every 5 seconds
-
-      // Store reference to the client and wsClient
-      const extendedClient = client as ApolloClient<unknown> & {
-        monitorInterval?: NodeJS.Timeout;
-        userLastMessageRef?: number;
-        userLastPingMessageRef?: number;
-        wsClient?: ReturnType<typeof createClient>;
-      };
-      extendedClient.monitorInterval = monitorInterval;
-      extendedClient.userLastMessageRef = userLastMessageRef;
-      extendedClient.userLastPingMessageRef = userLastPingMessageRef;
-      extendedClient.wsClient = wsClient;
-
-      activeConnections.push(extendedClient);
-
-      return extendedClient;
+      return client;
     };
 
     // Create connections in batches to avoid overwhelming the server
@@ -339,7 +213,7 @@ export const joinCommandExecutor: CommandExecutor = async ({ pluginApi, args }) 
       const endIndex = Math.min(startIndex + batchSize, numberOfUsers);
 
       for (let i = startIndex; i < endIndex; i += 1) {
-        promises.push(createWebSocketConnection(i));
+        promises.push(createUserConnection(i));
       }
 
       try {
@@ -380,19 +254,15 @@ export const stopJoinConnections = (pluginApi: PluginApi): number => {
   activeConnections.forEach((client) => {
     try {
       // Clear the monitoring interval
-      const extendedClient = client as ApolloClient<unknown> & { monitorInterval?: NodeJS.Timeout };
-      if (extendedClient.monitorInterval) {
-        clearInterval(extendedClient.monitorInterval);
+      if (client.monitorInterval) {
+        clearInterval(client.monitorInterval);
       }
 
       // Terminate the WebSocket connection
-      const extendedClientWithWs = client as ApolloClient<unknown> & {
-        wsClient?: ReturnType<typeof createClient>
-      };
-      if (extendedClientWithWs.wsClient) {
+      if (client.wsClient) {
         setTimeout(() => {
-          extendedClientWithWs.wsClient.terminate();
-          extendedClientWithWs.wsClient.dispose();
+          client.wsClient?.terminate();
+          client.wsClient?.dispose();
           pluginLogger.info('WebSocket connection terminated successfully');
         }, 1000);
       }

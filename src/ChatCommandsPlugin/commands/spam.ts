@@ -1,5 +1,5 @@
 import { CommandExecutor } from './types';
-import { addSpamInterval } from '../spamController';
+import { addSpamInterval } from './commons/spamController';
 
 export const spamCommandExecutor: CommandExecutor = ({ pluginApi, args }) => {
   if (!args || args.length < 1) {

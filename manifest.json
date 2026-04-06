@@ -1,5 +1,5 @@
 {
-  "requiredSdkVersion": "0.1.x",
+  "requiredSdkVersion": "0.x",
   "name": "ChatCommandsPlugin",
   "javascriptEntrypointUrl": "ChatCommandsPlugin.js",
   "localesBaseUrl": "ChatCommandsPlugin.js"
