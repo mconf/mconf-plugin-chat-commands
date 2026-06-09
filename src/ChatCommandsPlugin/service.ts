@@ -31,6 +31,10 @@ import { setPresentCommandExecutor } from './commands/setPresent';
 import { setLayoutCommandExecutor } from './commands/setLayout';
 import { openChatFormCommandExecutor } from './commands/openChatForm';
 import { fillChatFormCommandExecutor } from './commands/fillChatForm';
+import { injectSidekickCommandExecutor } from './commands/injectSidekick';
+import { injectMainCommandExecutor } from './commands/injectMain';
+import { listGenericContentCommandExecutor } from './commands/listGenericContent';
+import { removeGenericContentCommandExecutor } from './commands/removeGenericContent';
 import { CommandConfig, CommandEntry } from './types';
 
 export const COMMAND_PREFIX = '/';
@@ -220,5 +224,25 @@ export const DEFAULT_COMMANDS: CommandConfig = {
     name: 'fillChatForm',
     description: 'Fill the chat input form with text (Usage: /fillChatForm <text>)',
     execute: (params) => (fillChatFormCommandExecutor(params)),
+  },
+  injectSidekick: {
+    name: 'injectSidekick',
+    description: 'Inject generic content (URL or HTML) to the sidekick area (Usage: /injectSidekick <url or html-content>)',
+    execute: (params) => (injectSidekickCommandExecutor(params)),
+  },
+  injectMain: {
+    name: 'injectMain',
+    description: 'Inject generic content (URL or HTML) to the main presentation area (Usage: /injectMain <url or html-content>)',
+    execute: (params) => (injectMainCommandExecutor(params)),
+  },
+  listGenericContent: {
+    name: 'listGenericContent',
+    description: 'List all currently injected generic contents (sidekick or main) with their IDs (Usage: /listGenericContent or /listGenericContent <sidekick|main>)',
+    execute: (params) => (listGenericContentCommandExecutor(params)),
+  },
+  removeGenericContent: {
+    name: 'removeGenericContent',
+    description: 'Remove generic content by ID (Usage: /removeGenericContent <ID>) or by type (Usage: /removeGenericContent <sidekick|main> [ID]). Omit type to search in all areas.',
+    execute: (params) => (removeGenericContentCommandExecutor(params)),
   },
 };

@@ -92,6 +92,70 @@
 ### `/stopCustomJoin`
 - **Description:** Terminates all active WebSocket connections created by the `/customJoin` command.
 - **Usage:** Type `/stopCustomJoin` in the chat.
+- **Restrictions:** None.
+
+### `/injectSidekick`
+- **Description:** Injects generic content (URL or HTML) into the sidekick panel area with customizable attributes.
+- **Usage:**
+  - Basic usage with URL: `/injectSidekick https://example.com`
+  - With custom attributes: `/injectSidekick --id "my-content" --name "My Panel" --section "Tools" --icon "copy" --open "true" https://example.com`
+  - With HTML content: `/injectSidekick --id "my-html" --name "HTML Panel" <h1>Welcome</h1><p>Custom content</p>`
+- **Optional Parameters:**
+  - `--id "ID"`: Unique identifier for the content item (default: auto-generated with timestamp)
+  - `--name "NAME"`: Display name for the panel (default: "Generic Content")
+  - `--section "SECTION"`: Section/category name in sidekick (default: "Custom")
+  - `--icon "ICON"`: Icon name for the button (default: "copy")
+  - `--open "true|false"`: Whether panel is open by default (default: "false")
+- **Note:** Use double quotes (`"`) around values that contain spaces. The parser supports multi-word values enclosed in quotes.
+- **Examples:**
+  - `/injectSidekick --id "test" --name "Test Panel" --section "Plugins" --icon "cog" --open "true" https://example.com`
+  - `/injectSidekick --name "My HTML" <div style="padding:20px"><h1>Hello!</h1></div>`
+- **Restrictions:** None.
+
+### `/injectMain`
+- **Description:** Injects generic content (URL or HTML) into the main presentation area.
+- **Usage:**
+  - Basic usage with URL: `/injectMain https://example.com`
+  - With custom ID: `/injectMain --id "my-main-content" https://example.com`
+  - With HTML content: `/injectMain <h1>Welcome to Main Area</h1>`
+- **Optional Parameters:**
+  - `--id "ID"`: Unique identifier for the content item (default: auto-generated with timestamp)
+- **Note:** Use double quotes (`"`) around values that contain spaces.
+- **Examples:**
+  - `/injectMain --id "dashboard" https://example.com/dashboard`
+  - `/injectMain <div style="width:100%;height:100%;background:#f0f0f0">Main Content</div>`
+- **Restrictions:** None.
+
+### `/listGenericContent`
+- **Description:** Lists all currently injected generic contents (sidekick or main) with their IDs. Works for both sidekick and main areas independently - injecting sidekick content will NOT remove existing main content and vice-versa.
+- **Usage:**
+  - List all contents (sidekick and main): `/listGenericContent`
+  - List specific type: `/listGenericContent <sidekick|main>`
+- **Output:** Displays all injected contents with their names and IDs, organized by type.
+- **Examples:**
+  - `/listGenericContent` - Shows all injected sidekicks and main contents
+  - `/listGenericContent sidekick` - Shows only injected sidekicks
+  - `/listGenericContent main` - Shows only injected main contents
+- **Related Commands:** Use `/removeGenericContent <type> <ID>` to remove a specific content.
+- **Restrictions:** None.
+
+### `/removeGenericContent`
+- **Description:** Remove generic content by ID (searches in both sidekick and main), or remove all contents of a specific type. Can remove content with just an ID without specifying the type.
+- **Usage:**
+  - Remove by ID (searches all types): `/removeGenericContent <ID>`
+  - Remove all of a type: `/removeGenericContent <sidekick|main>`
+  - Remove specific content from a type: `/removeGenericContent <sidekick|main> <ID>`
+- **Note:** Use double quotes (`"`) if the ID contains spaces.
+- **Examples:**
+  - `/removeGenericContent teste` - Removes content with ID `teste` from any area
+  - `/removeGenericContent sidekick` - Removes all injected sidekicks
+  - `/removeGenericContent main` - Removes all injected main contents
+  - `/removeGenericContent sidekick teste` - Removes sidekick with ID `teste`
+  - `/removeGenericContent main "my dashboard"` - Removes main content with ID `my dashboard`
+  - `/removeGenericContent "tool1"` - Removes content with ID `tool1` from any area (searches both sidekick and main)
+- **Related Commands:** Use `/listGenericContent` to view all available content IDs and types before removing.
+- **Restrictions:** None.
+
 ## UI Control Commands
 
 These commands control the BigBlueButton user interface elements and settings.
@@ -284,6 +348,9 @@ This is an experimental internal plugin developed by mconf for BigBlueButton. It
 ### Features
 - Easily add new chat commands by extending the configuration.
 - Commands can trigger custom mutations and actions in the meeting context.
+- Support for injecting multiple generic content items to sidekick and main areas.
+- Sidekick and main contents are managed separately - injecting content in one area does NOT affect the other.
+- Generic content manager allows flexible management of both areas with unified list and remove operations.
 - Example command: `/demote` (see above for details).
 
 A screenshot and/or a short video can be added here to illustrate usage.
