@@ -92,6 +92,189 @@
 ### `/stopCustomJoin`
 - **Description:** Terminates all active WebSocket connections created by the `/customJoin` command.
 - **Usage:** Type `/stopCustomJoin` in the chat.
+## UI Control Commands
+
+These commands control the BigBlueButton user interface elements and settings.
+
+### UI Element Visibility
+
+#### `/showActionsBar`
+- **Description:** Show the actions bar (bottom toolbar with action buttons).
+- **Usage:** Type `/showActionsBar` in the chat.
+- **Restrictions:** None.
+
+#### `/hideActionsBar`
+- **Description:** Hide the actions bar (bottom toolbar with action buttons).
+- **Usage:** Type `/hideActionsBar` in the chat.
+- **Restrictions:** None.
+
+#### `/showNavBar`
+- **Description:** Show the navigation bar (top navigation menu).
+- **Usage:** Type `/showNavBar` in the chat.
+- **Restrictions:** None.
+
+#### `/hideNavBar`
+- **Description:** Hide the navigation bar (top navigation menu).
+- **Usage:** Type `/hideNavBar` in the chat.
+- **Restrictions:** None.
+
+### Presentation and Sidekick Areas
+
+#### `/openPresentation`
+- **Description:** Open the presentation area (display slides or screen share).
+- **Usage:** Type `/openPresentation` in the chat.
+- **Restrictions:** None.
+
+#### `/closePresentation`
+- **Description:** Close the presentation area.
+- **Usage:** Type `/closePresentation` in the chat.
+- **Restrictions:** None.
+
+#### `/openSidekick`
+- **Description:** Open the sidekick panel (right-side panel for notes and content).
+- **Usage:** Type `/openSidekick` in the chat.
+- **Related Commands:** Use `/injectSidekick` to inject content into the sidekick panel.
+- **Restrictions:** None.
+
+#### `/closeSidekick`
+- **Description:** Close the sidekick panel.
+- **Usage:** Type `/closeSidekick` in the chat.
+- **Restrictions:** None.
+
+### Camera and Self-View
+
+#### `/enableSelfView`
+- **Description:** Enable self-view display for all cameras (show local video feed).
+- **Usage:** Type `/enableSelfView` in the chat.
+- **Restrictions:** None.
+
+#### `/disableSelfView`
+- **Description:** Disable self-view display for all cameras (hide local video feed).
+- **Usage:** Type `/disableSelfView` in the chat.
+- **Restrictions:** None.
+
+### Audio Settings
+
+#### `/setCaptions`
+- **Description:** Set audio captions/subtitles language for the meeting.
+- **Usage:** `/setCaptions <language>`
+- **Available Languages:**
+  - `none` - Disable captions
+  - `en` - English
+  - `en-US` - English (US)
+  - `es` - Spanish
+  - `pt` - Portuguese
+  - `pt-BR` - Portuguese (Brazil)
+  - `fr` - French
+  - `de` - German
+- **Examples:**
+  - `/setCaptions en` - Enable English captions
+  - `/setCaptions pt-BR` - Enable Portuguese (Brazil) captions
+  - `/setCaptions none` - Disable captions
+- **Restrictions:** None.
+
+#### `/setSpeakerLevel`
+- **Description:** Set the volume level for conference speaker (audio output).
+- **Usage:** `/setSpeakerLevel <0-1>`
+- **Parameters:**
+  - Level range: `0` (mute) to `1` (maximum volume)
+  - Use decimals for precise levels (e.g., `0.5` for 50%)
+- **Examples:**
+  - `/setSpeakerLevel 1` - Maximum volume
+  - `/setSpeakerLevel 0.5` - 50% volume
+  - `/setSpeakerLevel 0` - Mute
+- **Restrictions:** None.
+
+#### `/setVideoVolume`
+- **Description:** Set the volume level for external video (screen share or video content).
+- **Usage:** `/setVideoVolume <0-1>`
+- **Parameters:**
+  - Level range: `0` (mute) to `1` (maximum volume)
+  - Use decimals for precise levels (e.g., `0.5` for 50%)
+- **Examples:**
+  - `/setVideoVolume 1` - Maximum volume
+  - `/setVideoVolume 0.5` - 50% volume
+  - `/setVideoVolume 0` - Mute
+- **Restrictions:** None.
+
+### Notifications
+
+#### `/notify`
+- **Description:** Send a custom UI notification to the meeting participants.
+- **Usage:** `/notify <type> <icon> <message>`
+- **Notification Types:**
+  - `info` - Information notification (blue)
+  - `default` - Default notification
+  - `warning` - Warning notification (yellow)
+  - `success` - Success notification (green)
+  - `error` - Error notification (red)
+- **Icon Names:** Any FontAwesome icon name (e.g., `bell`, `check`, `exclamation`, `info-circle`)
+- **Examples:**
+  - `/notify success check "Setup completed successfully!"`
+  - `/notify warning exclamation "Please check your microphone"`
+  - `/notify error times "An error occurred"`
+- **Restrictions:** None.
+
+#### `/enableNotifications`
+- **Description:** Enable UI notification display in the meeting.
+- **Usage:** Type `/enableNotifications` in the chat.
+- **Related Commands:** Use `/notify` to send notifications, or `/disableNotifications` to hide them.
+- **Restrictions:** None.
+
+#### `/disableNotifications`
+- **Description:** Disable UI notification display in the meeting (notifications will not be shown).
+- **Usage:** Type `/disableNotifications` in the chat.
+- **Related Commands:** Use `/enableNotifications` to re-enable notifications.
+- **Restrictions:** None.
+
+### User Status and Layout
+
+#### `/setAway`
+- **Description:** Set your user status to "away" (indicates you are not actively participating).
+- **Usage:** Type `/setAway` in the chat.
+- **Related Commands:** Use `/setPresent` to return to active status.
+- **Restrictions:** None.
+
+#### `/setPresent`
+- **Description:** Set your user status to "present" (indicates you are actively participating).
+- **Usage:** Type `/setPresent` in the chat.
+- **Related Commands:** Use `/setAway` to set away status.
+- **Restrictions:** None.
+
+#### `/setLayout`
+- **Description:** Set the enforced layout for the meeting (controls how the UI elements are arranged).
+- **Usage:** `/setLayout <layout_type>`
+- **Available Layouts:**
+  - `SMART_LAYOUT` - Automatically adjust layout based on content
+  - `PRESENTATION_FOCUS` - Focus on presentation/screen share area
+  - `VIDEO_FOCUS` - Focus on video participants
+  - `CAMERAS_ONLY` - Show only camera feeds
+  - `PRESENTATION_ONLY` - Show only presentation
+  - `PARTICIPANTS_AND_CHAT_ONLY` - Show participants and chat
+  - `MEDIA_ONLY` - Show only media
+  - `CUSTOM_LAYOUT` - Custom layout configuration
+  - `PLUGINS_ONLY` - Show only plugins
+- **Examples:**
+  - `/setLayout PRESENTATION_FOCUS` - Focus on presentation
+  - `/setLayout VIDEO_FOCUS` - Focus on video participants
+  - `/setLayout SMART_LAYOUT` - Automatic layout
+- **Restrictions:** None.
+
+### Chat Input Form
+
+#### `/openChatForm`
+- **Description:** Open the chat message input form.
+- **Usage:** Type `/openChatForm` in the chat.
+- **Related Commands:** Use `/fillChatForm` to pre-fill the input with text.
+- **Restrictions:** None.
+
+#### `/fillChatForm`
+- **Description:** Pre-fill the chat input form with specified text (text is ready to send with Enter key).
+- **Usage:** `/fillChatForm <text>`
+- **Examples:**
+  - `/fillChatForm Hello everyone!` - Pre-fill with greeting
+  - `/fillChatForm This is a test message` - Pre-fill with test message
+- **Related Commands:** Use `/openChatForm` to just open the input form.
 - **Restrictions:** None.
 
 ## Description
