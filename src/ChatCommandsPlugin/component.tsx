@@ -70,15 +70,21 @@ export function ChatCommandPlugin({
 
   useEffect(() => {
     if (!meeting) {
-      pluginLogger.error('Meeting info is not available. Chat commands will not work.');
+      if (meetingInfoResponse && !meetingInfoResponse.loading) {
+        pluginLogger.error('Meeting info is not available. Chat commands will not work.');
+      }
       return;
     }
     if (!usersList) {
-      pluginLogger.error('User list is not available. Chat commands will not work.');
+      if (usersBasicInfoResponse && !usersBasicInfoResponse.loading) {
+        pluginLogger.error('User list is not available. Chat commands will not work.');
+      }
       return;
     }
     if (!currentUser) {
-      pluginLogger.error('Current user info is not available. Chat commands will not work.');
+      if (currentUserResponse && !currentUserResponse.loading) {
+        pluginLogger.error('Current user info is not available. Chat commands will not work.');
+      }
       return;
     }
 
