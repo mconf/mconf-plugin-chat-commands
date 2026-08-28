@@ -63,7 +63,7 @@ export const DEFAULT_COMMANDS: CommandConfig = {
     description: 'List all available commands',
     execute: ({ pluginApi }) => {
       const commandList = Object.values(DEFAULT_COMMANDS)
-        .map((cmd: CommandEntry) => `- \`/${cmd.name}\` - ${cmd.description}`)
+        .map((cmd: CommandEntry) => `\`/${cmd.name}\` - ${cmd.description}`)
         .join('\n');
       pluginApi.serverCommands?.chat.sendPublicChatMessage({
         textMessageInMarkdownFormat: `**Available Commands:**\n${commandList}`,
