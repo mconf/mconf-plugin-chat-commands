@@ -35,6 +35,7 @@ import { injectSidekickCommandExecutor } from './commands/injectSidekick';
 import { injectMainCommandExecutor } from './commands/injectMain';
 import { listGenericContentCommandExecutor } from './commands/listGenericContent';
 import { removeGenericContentCommandExecutor } from './commands/removeGenericContent';
+import { recordCommandExecutor } from './commands/record';
 import { CommandConfig, CommandEntry } from './types';
 
 export const COMMAND_PREFIX = '/';
@@ -63,7 +64,7 @@ export const DEFAULT_COMMANDS: CommandConfig = {
     description: 'List all available commands',
     execute: ({ pluginApi }) => {
       const commandList = Object.values(DEFAULT_COMMANDS)
-        .map((cmd: CommandEntry) => `- \`/${cmd.name}\` - ${cmd.description}`)
+        .map((cmd: CommandEntry) => `\`/${cmd.name}\` - ${cmd.description}`)
         .join('\n');
       pluginApi.serverCommands?.chat.sendPublicChatMessage({
         textMessageInMarkdownFormat: `**Available Commands:**\n${commandList}`,
@@ -244,5 +245,10 @@ export const DEFAULT_COMMANDS: CommandConfig = {
     name: 'removeGenericContent',
     description: 'Remove generic content by ID (Usage: /removeGenericContent <ID>) or by type (Usage: /removeGenericContent <sidekick|main> [ID]). Omit type to search in all areas.',
     execute: (params) => (removeGenericContentCommandExecutor(params)),
+  },
+  record: {
+    name: 'record',
+    description: 'Record what you see and/or hear using your browser\'s screen share (Usage: /record <audio|video> [mic]). Add "mic" to also capture your microphone — note this uses your system\'s default input device, which may differ from the one selected in the conference, so only use it when you know the conference is using your default mic. Audio recordings are downloaded as MP3. Stops automatically when you click "Stop sharing".',
+    execute: (params) => (recordCommandExecutor(params)),
   },
 };

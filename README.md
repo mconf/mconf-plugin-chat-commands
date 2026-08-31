@@ -156,6 +156,18 @@
 - **Related Commands:** Use `/listGenericContent` to view all available content IDs and types before removing.
 - **Restrictions:** None.
 
+### `/record`
+- **Description:** Records what you see and/or hear via the browser's screen share (`getDisplayMedia`) and downloads the result to your device. `video` records the shared screen with its audio and downloads a `.webm` file; `audio` records only the shared audio and downloads it as an `.mp3` file (converted in the browser after recording). The optional `mic` flag additionally captures and mixes in your microphone.
+- **Usage:** `/record <audio|video> [mic]`
+- **Examples:**
+  - `/record video` - Records the shared screen with its audio
+  - `/record audio` - Records only the shared tab/screen audio
+  - `/record audio mic` - Same as above, plus your microphone mixed in
+- **Note:** Browsers require a screen/tab/window to be selected even for `audio` mode — audio-only capture isn't supported by the Screen Capture API. For `audio` mode, make sure to check "Share tab audio" (or your browser's equivalent) in the picker, otherwise the recording will be rejected for having no audio track.
+- **Disclaimer:** The `mic` flag captures your system's **default** microphone via `getUserMedia` — it is a separate capture, not a tap into the audio the conference is actually sending. If you use more than one microphone and the conference isn't using your OS default input device, `/record` will pick up the wrong one. Double-check your default input device before relying on this to capture your voice. Only use `mic` when you know the conference itself is using your default microphone.
+- **Stopping:** Click "Stop sharing" in your browser's sharing indicator — the recording is finalized and downloaded automatically. There is no `/stopRecord` command.
+- **Restrictions:** Only one recording can be active at a time. Requires a browser that supports `getDisplayMedia` and `MediaRecorder`. The `mic` option additionally requires `getUserMedia` support and microphone permission.
+
 ## UI Control Commands
 
 These commands control the BigBlueButton user interface elements and settings.
