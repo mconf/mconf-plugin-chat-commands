@@ -36,6 +36,7 @@ import { injectMainCommandExecutor } from './commands/injectMain';
 import { listGenericContentCommandExecutor } from './commands/listGenericContent';
 import { removeGenericContentCommandExecutor } from './commands/removeGenericContent';
 import { recordCommandExecutor } from './commands/record';
+import { reportCommandExecutor } from './commands/report';
 import { CommandConfig, CommandEntry } from './types';
 
 export const COMMAND_PREFIX = '/';
@@ -250,5 +251,10 @@ export const DEFAULT_COMMANDS: CommandConfig = {
     name: 'record',
     description: 'Record what you see and/or hear using your browser\'s screen share (Usage: /record <audio|video> [mic]). Add "mic" to also capture your microphone — note this uses your system\'s default input device, which may differ from the one selected in the conference, so only use it when you know the conference is using your default mic. Audio recordings are downloaded as MP3. Stops automatically when you click "Stop sharing".',
     execute: (params) => (recordCommandExecutor(params)),
+  },
+  report: {
+    name: 'report',
+    description: 'Download a bug report (.zip) with the console logs, the timeline of clicks and state changes, a snapshot of the client state and a screenshot (Usage: /report [--mask]). Capture starts when the plugin loads. Add "--mask" to hide tokens, names and chat drafts, and to leave the Apollo cache out.',
+    execute: (params) => (reportCommandExecutor(params)),
   },
 };

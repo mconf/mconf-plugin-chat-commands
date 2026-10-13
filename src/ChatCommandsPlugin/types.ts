@@ -29,6 +29,14 @@ export interface SetRoleMutation {
 
 export type PluginMutationVariables = SetRoleMutation;
 
+export interface UserClientSettingsSubscription {
+  user_current: {
+    userClientSettings: {
+      userClientSettingsJson: Record<string, Record<string, unknown>> | null;
+    } | null;
+  }[];
+}
+
 export interface MutationMap {
   [key: string]: TriggerMutationFunction<PluginMutationVariables> | null
 }
