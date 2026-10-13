@@ -14,6 +14,7 @@ export const PERSIST_THROTTLE_MS = 5000;
 export const MAX_CONSOLE_ENTRY_LENGTH = 4096;
 export const MAX_STORAGE_VALUE_LENGTH = 1024;
 export const MAX_ELEMENT_TEXT_LENGTH = 50;
+export const MAX_LABEL_ANCESTOR_DISTANCE = 3;
 export const MAX_SERIALIZE_DEPTH = 5;
 export const MAX_SERIALIZE_KEYS = 100;
 

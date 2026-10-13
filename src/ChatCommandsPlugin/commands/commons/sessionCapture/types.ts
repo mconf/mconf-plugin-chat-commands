@@ -26,6 +26,7 @@ export interface ElementDescriptor {
   id?: string;
   dataTest?: string;
   ariaLabel?: string;
+  label?: string;
   role?: string;
   title?: string;
   text?: string;

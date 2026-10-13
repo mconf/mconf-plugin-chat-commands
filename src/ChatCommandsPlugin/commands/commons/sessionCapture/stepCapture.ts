@@ -17,6 +17,10 @@ const isRecordedKey = (event: KeyboardEvent): boolean => RECORDED_KEYS.includes(
 
 export const installStepCapture = (recordEvent: RecordEvent): void => {
   document.addEventListener('click', (event) => {
+    // Toggling a checkbox or radio also fires `change`, which records it as a
+    // Check/Uncheck step; recording the click too would list it twice.
+    const clicked = event.target as HTMLInputElement;
+    if (clicked.type === 'checkbox' || clicked.type === 'radio') return;
     const target = describeElement(event.target);
     recordEvent({ kind: 'click', summary: `click ${elementLabel(target)}`, target });
   }, true);
