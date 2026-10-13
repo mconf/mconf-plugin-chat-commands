@@ -168,6 +168,26 @@
 - **Stopping:** Click "Stop sharing" in your browser's sharing indicator — the recording is finalized and downloaded automatically. There is no `/stopRecord` command.
 - **Restrictions:** Only one recording can be active at a time. Requires a browser that supports `getDisplayMedia` and `MediaRecorder`. The `mic` option additionally requires `getUserMedia` support and microphone permission.
 
+### `/report`
+- **Description:** Downloads a bug report as `report-<timestamp>.zip`, built from what the plugin has been capturing in the background since it loaded. Start with `report.md`:
+  - `report.md` — the readable report:
+    - **Context:** user and role, browser, window size, what is in the main area, user list, own cameras, connection, how much history was captured.
+    - **Steps before the report:** the last 100 user steps, oldest first, with the label the user saw on each clicked button and its `data-test`. Clicks, checked/edited fields (never the typed value), Enter/Escape/Tab and shortcuts, settings changed in the Settings modal (e.g. `Dark mode: Off → On`), main area changes, presenter/camera/slide changes, page reloads, tab hidden/visible, offline/online.
+    - **Recent errors:** the last 10 errors logged to the console.
+    - **Settings:** one table per Settings modal tab (Application, Layout, Audio, Notifications, Data saving, Transcription), marking with ★ what the user changed from the default. Values come from the `user_clientSettings` subscription, which the client updates when it loads and on every Save in the modal; if it is unavailable, they fall back to defaults merged with the changes saved in storage.
+  - `screenshot.png` — a frame of the current tab, captured with `getDisplayMedia` (the browser asks for permission).
+  - `console.log` — every `console.*` call, plus uncaught errors, unhandled promise rejections, failed resource loads and CSP violations.
+  - `trace.json` — the whole timeline in Chrome Trace Event Format. Open it at [ui.perfetto.dev](https://ui.perfetto.dev) (the file is processed locally in the browser) to see user steps, console errors, other console output, main area content, tab visibility/offline periods and storage writes on parallel tracks, with page reloads and the `/report` moment marked across all of them.
+  - `details.json` — raw data for developers: full timeline including every `localStorage`/`sessionStorage` write, the full settings object, SDK data, full storage dump, `meetingClientSettings`, visible layout regions with their position and size, the Apollo cache when the client exposes it, and report metadata (URL, `clientSessionUUID`, dropped entries).
+- **Usage:** `/report [--mask]`
+- **Examples:**
+  - `/report` - Full report, nothing hidden
+  - `/report --mask` - Replaces tokens, user names, meeting name and external IDs with `<masked:...>` in every file, reduces unsent chat drafts to their length, strips the URL query string and leaves the Apollo cache out
+- **Capture window:** Capture starts when the plugin loads, after the client has already joined — anything logged before that is not available. Console output is kept up to ~20 MB and the timeline up to ~5 MB in memory, dropping the oldest entries first. The newest ~3 MB are also kept in `sessionStorage`, so the report survives page reloads in the same tab. Messages the browser prints itself without going through `console.*` (e.g. some network errors) cannot be captured.
+- **Apollo cache:** Only available when `public.app.enableApolloDevTools` is `true`, which exposes the client as `window.__APOLLO_CLIENT__`. Otherwise `details.json` marks it as unavailable.
+- **Note:** If the screenshot permission is denied, the report is still downloaded without it. Names shorter than 3 characters are not masked, to avoid masking unrelated text.
+- **Restrictions:** One report at a time.
+
 ## UI Control Commands
 
 These commands control the BigBlueButton user interface elements and settings.

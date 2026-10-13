@@ -2,6 +2,10 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom/client';
 import { BbbPluginSdk, PluginApi } from 'bigbluebutton-html-plugin-sdk';
 import ChatCommandsPlugin from './ChatCommandsPlugin/component';
+import { installSessionCapture } from './ChatCommandsPlugin/commands/commons/sessionCapture';
+
+// Before rendering: anything logged or clicked earlier is lost to /report.
+installSessionCapture();
 
 const uuid = document.currentScript?.getAttribute('uuid') || 'root';
 

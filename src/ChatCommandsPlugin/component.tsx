@@ -10,6 +10,7 @@ import {
   COMMAND_PREFIX,
 } from './service';
 import { SET_ROLE } from './mutations';
+import { useSdkStateTracker } from './useSdkStateTracker';
 
 export function ChatCommandPlugin({
   pluginApi,
@@ -37,6 +38,8 @@ export function ChatCommandPlugin({
     }
     return currentUserResponse.data;
   }, [currentUserResponse]);
+
+  useSdkStateTracker(pluginApi, currentUser);
 
   const usersList = useMemo(() => {
     if (!usersBasicInfoResponse) return [];
