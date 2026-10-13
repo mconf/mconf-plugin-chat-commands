@@ -3,6 +3,7 @@ import { CommandExecutor } from './types';
 import { isRecordingActive, setRecordingActive } from './commons/recordingController';
 import { AudioMix, mixAudioTracks } from './commons/audioMixer';
 import { encodeToMp3 } from './commons/mp3Encoder';
+import { triggerDownload } from './commons/download';
 
 type RecordMode = 'audio' | 'video';
 
@@ -17,17 +18,6 @@ const pickMimeType = (mode: RecordMode): string | undefined => {
     ? ['video/webm;codecs=vp9,opus', 'video/webm;codecs=vp8,opus', 'video/webm']
     : ['audio/webm;codecs=opus', 'audio/webm'];
   return candidates.find((candidate) => MediaRecorder.isTypeSupported(candidate));
-};
-
-const triggerDownload = (blob: Blob, filename: string): void => {
-  const url = URL.createObjectURL(blob);
-  const link = document.createElement('a');
-  link.href = url;
-  link.download = filename;
-  document.body.appendChild(link);
-  link.click();
-  link.remove();
-  setTimeout(() => URL.revokeObjectURL(url), 10000);
 };
 
 export const recordCommandExecutor: CommandExecutor = async ({ pluginApi, args }) => {
