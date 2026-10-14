@@ -1,5 +1,6 @@
 import { CurrentUserData, Meeting } from 'bigbluebutton-html-plugin-sdk';
 import { CaptureSnapshot } from '../sessionCapture';
+import { LoadedPlugin } from '../loadedPlugins';
 import { SettingsSnapshot } from '../stateSnapshot';
 
 export interface ReportStep {
@@ -23,6 +24,7 @@ export interface MarkdownReportInput {
   meeting: Meeting;
   tracked: Record<string, unknown>;
   screenshotNote: string;
+  plugins: LoadedPlugin[];
 }
 
 export interface TraceEvent {

@@ -34,6 +34,7 @@ import { fillChatFormCommandExecutor } from './commands/fillChatForm';
 import { injectSidekickCommandExecutor } from './commands/injectSidekick';
 import { injectMainCommandExecutor } from './commands/injectMain';
 import { listGenericContentCommandExecutor } from './commands/listGenericContent';
+import { listPluginsCommandExecutor } from './commands/listPlugins';
 import { removeGenericContentCommandExecutor } from './commands/removeGenericContent';
 import { recordCommandExecutor } from './commands/record';
 import { reportCommandExecutor } from './commands/report';
@@ -241,6 +242,11 @@ export const DEFAULT_COMMANDS: CommandConfig = {
     name: 'listGenericContent',
     description: 'List all currently injected generic contents (sidekick or main) with their IDs (Usage: /listGenericContent or /listGenericContent <sidekick|main>)',
     execute: (params) => (listGenericContentCommandExecutor(params)),
+  },
+  listPlugins: {
+    name: 'listPlugins',
+    description: 'List all plugins loaded in the meeting with their versions, when the version can be inferred from the bundle URL',
+    execute: (params) => (listPluginsCommandExecutor(params)),
   },
   removeGenericContent: {
     name: 'removeGenericContent',

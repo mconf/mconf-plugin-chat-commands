@@ -7,6 +7,7 @@ import { captureScreenshot } from './commons/screenshot';
 import { triggerDownload } from './commons/download';
 import { createMasker } from './commons/mask';
 import { getSdkState } from './commons/sdkStateStore';
+import { getLoadedPlugins } from './commons/loadedPlugins';
 import { buildMarkdownReport } from './commons/reportOutput/markdownReport';
 import { buildPerfettoTrace } from './commons/reportOutput/perfettoTrace';
 import { resolveDeviceLabels } from './commons/reportOutput/deviceLabels';
@@ -66,6 +67,7 @@ export const reportCommandExecutor: CommandExecutor = async ({
     // don't end up in the report.
     const capture = getSessionCapture().snapshot();
     const tracked = getSdkState();
+    const plugins = getLoadedPlugins();
     const settings = collectSettingsSnapshot(tracked.clientSettings);
     const state = collectStateSnapshot({
       currentUser,
@@ -129,10 +131,12 @@ export const reportCommandExecutor: CommandExecutor = async ({
       meeting,
       tracked,
       screenshotNote,
+      plugins,
     });
     const details = {
       meta: { ...meta, screenshot: screenshotNote },
       state,
+      plugins,
       timeline: withIsoTime(timeline),
     };
 

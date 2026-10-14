@@ -139,6 +139,12 @@
 - **Related Commands:** Use `/removeGenericContent <type> <ID>` to remove a specific content.
 - **Restrictions:** None.
 
+### `/listPlugins`
+- **Description:** Lists every plugin loaded in the meeting (from `window.bbb_plugins`), sorted by name, with the URL of its JavaScript bundle and its version.
+- **Usage:** `/listPlugins`
+- **Output:** One line per plugin with its name, version and bundle URL. The plugin SDK does not expose plugin versions, so the version is read from the bundle URL: a filename like `MyPlugin-1.2.0-7fcc1a.js` (shown as `1.2.0 (build 7fcc1a)`, the suffix being the commit hash), or a directory or query value that looks like a semantic version (e.g. `/plugins/my-plugin/1.2.0/MyPlugin.js` or `MyPlugin.js?v=1.2.0`). When there is none, the plugin is listed as `unknown version`.
+- **Restrictions:** None.
+
 ### `/removeGenericContent`
 - **Description:** Remove generic content by ID (searches in both sidekick and main), or remove all contents of a specific type. Can remove content with just an ID without specifying the type.
 - **Usage:**
@@ -174,11 +180,12 @@
     - **Context:** user and role, browser, window size, what is in the main area, user list, own cameras, connection, how much history was captured.
     - **Steps before the report:** the last 100 user steps, oldest first, with the label the user saw on each clicked button and its `data-test`. Clicks, checked/edited fields (never the typed value), Enter/Escape/Tab and shortcuts, settings changed in the Settings modal (e.g. `Dark mode: Off → On`), main area changes, presenter/camera/slide changes, page reloads, tab hidden/visible, offline/online.
     - **Recent errors:** the last 10 errors logged to the console.
+    - **Plugins:** every plugin loaded in the meeting, with its version and bundle URL (same as `/listPlugins`).
     - **Settings:** one table per Settings modal tab (Application, Layout, Audio, Notifications, Data saving, Transcription), marking with ★ what the user changed from the default. Values come from the `user_clientSettings` subscription, which the client updates when it loads and on every Save in the modal; if it is unavailable, they fall back to defaults merged with the changes saved in storage.
   - `screenshot.png` — a frame of the current tab, captured with `getDisplayMedia` (the browser asks for permission).
   - `console.log` — every `console.*` call, plus uncaught errors, unhandled promise rejections, failed resource loads and CSP violations.
   - `trace.json` — the whole timeline in Chrome Trace Event Format. Open it at [ui.perfetto.dev](https://ui.perfetto.dev) (the file is processed locally in the browser) to see user steps, console errors, other console output, main area content, tab visibility/offline periods and storage writes on parallel tracks, with page reloads and the `/report` moment marked across all of them.
-  - `details.json` — raw data for developers: full timeline including every `localStorage`/`sessionStorage` write, the full settings object, SDK data, full storage dump, `meetingClientSettings`, visible layout regions with their position and size, the Apollo cache when the client exposes it, and report metadata (URL, `clientSessionUUID`, dropped entries).
+  - `details.json` — raw data for developers: full timeline including every `localStorage`/`sessionStorage` write, the full settings object, SDK data, full storage dump, `meetingClientSettings`, visible layout regions with their position and size, the Apollo cache when the client exposes it, the loaded plugins, and report metadata (URL, `clientSessionUUID`, dropped entries).
 - **Usage:** `/report [--mask]`
 - **Examples:**
   - `/report` - Full report, nothing hidden
