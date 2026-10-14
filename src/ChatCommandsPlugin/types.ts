@@ -4,6 +4,7 @@ import { CommandExecuteParams } from './commands/types';
 
 declare global {
   interface Window {
+    bbb_plugins?: Record<string, PluginApi>;
     meetingClientSettings?: {
       public: {
         app: {

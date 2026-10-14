@@ -139,6 +139,12 @@
 - **Related Commands:** Use `/removeGenericContent <type> <ID>` to remove a specific content.
 - **Restrictions:** None.
 
+### `/listPlugins`
+- **Description:** Lists every plugin loaded in the meeting (from `window.bbb_plugins`), sorted by name, with the URL of its JavaScript bundle and its version.
+- **Usage:** `/listPlugins`
+- **Output:** One line per plugin with its name, version and bundle URL. The plugin SDK does not expose plugin versions, so the version is read from the bundle URL: a directory or query value that looks like a semantic version (e.g. `/plugins/my-plugin/1.2.0/MyPlugin.js` or `MyPlugin.js?v=1.2.0`). When there is none, the plugin is listed as `unknown version`.
+- **Restrictions:** None.
+
 ### `/removeGenericContent`
 - **Description:** Remove generic content by ID (searches in both sidekick and main), or remove all contents of a specific type. Can remove content with just an ID without specifying the type.
 - **Usage:**
