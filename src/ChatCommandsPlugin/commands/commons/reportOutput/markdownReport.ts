@@ -141,11 +141,24 @@ const errorsSection = ({ capture, generatedAt }: MarkdownReportInput): string =>
     markdownTable(['Time', 'Before report', 'Type', 'Message'], rows)}`;
 };
 
+const pluginsSection = ({ plugins }: MarkdownReportInput): string => {
+  if (plugins.length === 0) return '## Plugins\n\nNo plugins found in `window.bbb_plugins`.';
+
+  const rows = plugins.map((plugin) => [
+    plugin.name,
+    plugin.version ?? 'Unknown',
+    plugin.entrypointUrl ? inlineCode(plugin.entrypointUrl) : 'Not found',
+  ]);
+  return `## Plugins\n\n${plugins.length} loaded. Versions are read from the bundle URL, when it has one.\n\n${
+    markdownTable(['Plugin', 'Version', 'Bundle'], rows)}`;
+};
+
 export const buildMarkdownReport = (input: MarkdownReportInput): string => [
   `# Bug report — ${formatDateTime(input.generatedAt)}`,
   'Files: `screenshot.png` · `console.log` (full console) · `trace.json` (timeline — open it at https://ui.perfetto.dev) · `details.json` (raw data)',
   contextSection(input),
   stepsSection(input),
   errorsSection(input),
+  pluginsSection(input),
   settingsSection(input),
 ].join('\n\n');
