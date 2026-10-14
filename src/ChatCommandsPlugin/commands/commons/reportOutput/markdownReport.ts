@@ -22,6 +22,7 @@ import {
   markdownTable,
 } from './format';
 import { describeMainArea, toReportSteps } from './steps';
+import { formatPluginVersion } from '../loadedPlugins';
 import { DeviceLabels, MarkdownReportInput } from './types';
 
 type JsonObject = Record<string, unknown>;
@@ -146,7 +147,7 @@ const pluginsSection = ({ plugins }: MarkdownReportInput): string => {
 
   const rows = plugins.map((plugin) => [
     plugin.name,
-    plugin.version ?? 'Unknown',
+    formatPluginVersion(plugin) ?? 'Unknown',
     plugin.entrypointUrl ? inlineCode(plugin.entrypointUrl) : 'Not found',
   ]);
   return `## Plugins\n\n${plugins.length} loaded. Versions are read from the bundle URL, when it has one.\n\n${

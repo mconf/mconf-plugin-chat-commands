@@ -142,7 +142,7 @@
 ### `/listPlugins`
 - **Description:** Lists every plugin loaded in the meeting (from `window.bbb_plugins`), sorted by name, with the URL of its JavaScript bundle and its version.
 - **Usage:** `/listPlugins`
-- **Output:** One line per plugin with its name, version and bundle URL. The plugin SDK does not expose plugin versions, so the version is read from the bundle URL: a directory or query value that looks like a semantic version (e.g. `/plugins/my-plugin/1.2.0/MyPlugin.js` or `MyPlugin.js?v=1.2.0`). When there is none, the plugin is listed as `unknown version`.
+- **Output:** One line per plugin with its name, version and bundle URL. The plugin SDK does not expose plugin versions, so the version is read from the bundle URL: a filename like `MyPlugin-1.2.0-7fcc1a.js` (shown as `1.2.0 (build 7fcc1a)`, the suffix being the commit hash), or a directory or query value that looks like a semantic version (e.g. `/plugins/my-plugin/1.2.0/MyPlugin.js` or `MyPlugin.js?v=1.2.0`). When there is none, the plugin is listed as `unknown version`.
 - **Restrictions:** None.
 
 ### `/removeGenericContent`
