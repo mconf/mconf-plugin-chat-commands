@@ -39,7 +39,7 @@ const extractVersionFromUrl = (src: string): PluginVersion => {
     const fromFilename = extractVersionFromFilename(filename);
     if (fromFilename) return fromFilename;
 
-    const candidates = [...segments, ...[...url.searchParams.values()].map(safeDecode)];
+    const candidates = [...segments, ...Array.from(url.searchParams.values()).map(safeDecode)];
     const match = candidates
       .map((candidate) => SEMVER_PATTERN.exec(candidate))
       .find((result) => result !== null);
