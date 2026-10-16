@@ -50,15 +50,7 @@ export default {
       },
       {
         test: /\.tsx?$/,
-        use: {
-          loader: 'ts-loader',
-          options: {
-            compilerOptions: {
-              module: 'esnext',
-              target: 'es5',
-            },
-          },
-        },
+        use: 'ts-loader',
         exclude: /node_modules/,
       },
     ],
